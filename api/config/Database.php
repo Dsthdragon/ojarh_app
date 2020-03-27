@@ -9,6 +9,7 @@
     define("SELLER_URL", "http://localhost/ojarhnew/seller/");
     define("BUYER_URL", "http://localhost/ojarhnew/buyer/");
     define("ADMIN_URL", "http://localhost/ojarhnew/admin/");
+    define("ADMIN_URL", "http://localhost/ojarhnew/international/");
 
 
 
