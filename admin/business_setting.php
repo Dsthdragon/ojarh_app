@@ -1,6 +1,7 @@
 <?php
 include('../api/config/Database.php');
 include('../api/models/session.php');
+include('can_access.php');
 ?>
 <?php include 'inc/header.php'; ?>
                 <div class="app-inner-layout app-inner-layout-page">

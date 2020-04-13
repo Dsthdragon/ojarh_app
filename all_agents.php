@@ -48,12 +48,12 @@
                             </div>
                         </div>
                     <div class="d-flex justify-content-center col-12">
-                        <div class="toolbar-bottom">
+                        <div class="toolbar-bottom"><!-- 
                             <ul class="pagination a-center">
                                 <li class="page-item disabled"><span class="page-link"><i class="fa fa-angle-left" ></i> </span></li>
                                 <li class="page-item active"><span class="page-link">1</span></li>
                                 <li class="page-item next"><a class="page-link" href="/collections/frontpage?page=2" title="Next &raquo;"><i class="fa fa-angle-right" ></i></a></li>
-                            </ul>
+                            </ul> -->
                         </div>
                     </div>
                     </div>

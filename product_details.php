@@ -17,6 +17,16 @@
     $productPack7 = $productDetails->pack7;
     $productPack8 = $productDetails->pack8;
 
+    $images = [];
+
+    for($x = 0; $x < 7; $x++)
+    {
+      if($productDetails->{"img".$x})
+      {
+        $images[] = "seller/productimg/".$productDetails->productid."/".$productDetails->{"img".$x};
+      }
+    }
+
     // $productPack0 = explode("+", $productPack0);
     // $productPack1 = explode("+", $productPack1);
     // $productPack2 = explode("+", $productPack2);

@@ -6,7 +6,7 @@
 		include_once('Controller.php');
 		$db = getDB();
 		$userClass = new Users($db);
-		if($userrole=='Admin'){
+		if($userrole=='Admin' || $userrole=='Sub Admin'){
 			$userDetails = $userClass->userDetails($userid);
 			$bizdata = $userClass->bizDetails($userid);
 			$acctdetails = $userClass->acctdetails($userid);

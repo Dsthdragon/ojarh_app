@@ -133,48 +133,15 @@
                                     data-column3="3"
                                     data-column4="3"
                                     data-column5="2">
-                                    <div class="logo-item">
-                                        <a href="#" class="logo-bar__link">
-                                            <img class="img-responsive" alt="RT AaShop demo"
-                                                src="assets/images/br-1_170x100.png?v=1566546298"/>
-                                        </a>
-                                    </div>
-                                    <div class="logo-item">
-                                        <a href="#" class="logo-bar__link">
-                                            <img class="img-responsive" alt="RT AaShop demo"
-                                                src="assets/images/br-2_170x100.png?v=1566546307"/>
-                                        </a>
-                                    </div>
-                                    <div class="logo-item">
-                                        <a href="#" class="logo-bar__link">
-                                            <img class="img-responsive" alt="RT AaShop demo"
-                                                src="assets/images/br-3_170x100.png?v=1566546314"/>
-                                        </a>
-                                    </div>
-                                    <div class="logo-item">
-                                        <a href="#" class="logo-bar__link">
-                                            <img class="img-responsive" alt="RT AaShop demo"
-                                                src="assets/images/br-4_170x100.png?v=1566546327"/>
-                                        </a>
-                                    </div>
-                                    <div class="logo-item">
-                                        <a href="#" class="logo-bar__link">
-                                            <img class="img-responsive" alt="RT AaShop demo"
-                                                src="assets/images/br-5_170x100.png?v=1566546335"/>
-                                        </a>
-                                    </div>
-                                    <div class="logo-item">
-                                        <a href="#" class="logo-bar__link">
-                                            <img class="img-responsive" alt="RT AaShop demo"
-                                                src="assets/images/br-6_170x100.png?v=1566546342"/>
-                                        </a>
-                                    </div>
-                                    <div class="logo-item">
-                                        <a href="#" class="logo-bar__link">
-                                            <img class="img-responsive" alt="RT AaShop demo"
-                                                src="assets/images/br-3_ff43cb96-dbfc-44b2-98f6-fb5fbd7e5637_170x100.png?v=1566546358"/>
-                                        </a>
-                                    </div>
+                                    
+                                    <?php foreach($userClass->getBrands() as $key => $value): ?>
+                                        <div class="logo-item">
+                                            <a href="#" class="logo-bar__link">
+                                                <img class="img-responsive" alt="RT AaShop demo"
+                                                    src="admin/images/brands/<?= $value['img']; ?>"/>
+                                            </a>
+                                        </div>
+                                    <?php endforeach; ?>
                                 </div>
                             </div>
                         </div>

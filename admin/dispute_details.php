@@ -1,16 +1,7 @@
 <?php
 include('../api/config/Database.php');
 include('../api/models/session.php');
-if(!isset($_SESSION['role']) || empty($_SESSION['role'])  || $_SESSION['role']!='Admin')
-    {
-        session_destroy();
-        session_unset();
-        header("Location: " . BASE_URL);
-    }
-
-    // if(isset($_POST['marketname'])){
-    //   $userClass->market_list();
-    // }
+include('can_access.php');
 ?>
 <?Php include_once('inc/header.php'); ?>
                     <div class="app-inner-layout chat-layout">

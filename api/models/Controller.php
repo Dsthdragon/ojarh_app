@@ -28,6 +28,12 @@ class Users{
     public $marketstatus;
     public $created_by;
 
+
+    public $brandid;
+    public $brandtitle;
+    public $brandimg;
+    public $brandcreated;
+
     public $file_name;
     public $file_tmp;
     public $file_type;
@@ -87,6 +93,9 @@ class Users{
         $this->address = htmlspecialchars(strip_tags($this->address));
         $this->status = htmlspecialchars(strip_tags($this->status));
         $this->role = htmlspecialchars(strip_tags($this->role));
+        if($this->role == 'Admin' || $this->role == 'Sub Admin'){
+            $this->status = 1;
+        }
 
         if($this->role == 'Seller'){
             $this->currency = '#';
@@ -128,6 +137,7 @@ class Users{
                 $this->userAcctType($this->userid, 'Buyer');
                 return true;
             }
+            return true;
         }else{
             echo 'Could not create account, try again later!';
             return false;
@@ -148,6 +158,10 @@ class Users{
             }
             printf("Error: %s.\n", $stmt->error);
             return false;
+    }
+
+    public function create_ads(){
+        
     }
 
     public function upgrade_plan(){
@@ -511,11 +525,12 @@ class Users{
                     session_regenerate_id();
                     $_SESSION['userid'] = $user['userid'];
                     $_SESSION['role'] = $user['role'];
+
                     $this->updateLastLogin();
 
                     $this->userid = $user['userid'];
                     $this->title = $user['username']. ' ' . 'just logged in!';
-                    $this->body = "A Seller Logged in at ". ' - ' .date('Y-m-d H:i:s');
+                    $this->body = "A User Logged in at ". ' - ' .date('Y-m-d H:i:s');
                     $this->generatedlink = "seller_details.php?sellerid=".$this->userid;
                     $this->notifications();
 
@@ -681,6 +696,57 @@ class Users{
         }
         printf("Error: %s.\n", $stmt->error);
         return false;
+    }
+
+    public function getBrands(){
+        $query = "SELECT * FROM brand";
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
+
+    public function create_brand(){
+
+        $query = "INSERT INTO brand (title,img) VALUES (:title,:img)";
+
+        $stmt = $this->conn->prepare($query);
+
+        $stmt->bindValue(':title', htmlspecialchars(strip_tags($this->brandtitle)));
+        $stmt->bindValue(':img', htmlspecialchars(strip_tags($this->brandimg)));
+
+        if($stmt->execute()){
+            return true;
+
+        }
+        printf("Error: %s.\n", $stmt->error);
+        return false;
+    }
+
+
+    public function delete_brand(){
+        $query = "DELETE FROM brand WHERE id = :id";
+
+        $stmt = $this->conn->prepare($query);
+        if($stmt->execute(array(":id" => $this->brandid))){
+            return true;
+        }
+
+    }
+
+
+    //Check if username exit;
+    public function isBrandExist(){
+        $query = "SELECT * FROM brand WHERE title=:title";
+        $stmt = $this->conn->prepare($query);
+        $this->brandtitle = htmlspecialchars(strip_tags($this->brandtitle));
+        $stmt->bindValue(':title', $this->brandtitle);
+        $stmt->execute();
+        if($stmt->rowCount() > 0){
+            // if(is_dir( "../../seller/marketImage/".$this->marketname )){
+            //     return true;
+            // }
+            return true;
+        }
     }
 
     public function readProfilePix($userid){
@@ -879,11 +945,19 @@ class Users{
     }
 
     public function fetchStates(){
-        $sql = 'SELECT * FROM naija_states ORDER BY id';
+        $sql = 'SELECT * FROM naija_states ORDER BY name';
         foreach ($this->conn->query($sql) as $row) {
             echo '<option value="'.$row['name'].'">'.$row['name'].'</option>';
         }
     }
+
+    public function fetchStatesData(){
+        $sql = 'SELECT * FROM naija_states ORDER BY name';
+        $sth = $this->conn->prepare($sql);
+        $sth->execute();
+        return $sth->fetchAll();
+    }
+
 
     public function add_accountdetails(){
 
@@ -1373,10 +1447,99 @@ class Users{
         return true;
     }
 
+    public function productCount()
+    {
+        $sth = $this->conn->prepare("SELECT * FROM product_details");
+        $sth->execute();
+        return $sth->rowCount();
+    }
+
+    public function marketCount()
+    {
+        $sth = $this->conn->prepare("SELECT * FROM market");
+        $sth->execute();
+        return $sth->rowCount();
+    }
+
+    public function categoryCount()
+    {
+        $sth = $this->conn->prepare("SELECT * FROM category");
+        $sth->execute();
+        return $sth->rowCount();
+    }
+
+    public function updateSettings($column, $value){
+        $sth = $this->conn->prepare("UPDATE settings SET {$column}=:value");
+        return $sth->execute(array(':value' => $value));
+    }
+
+    public function getSettings()
+    {
+        $sth = $this->conn->prepare("SELECT * FROM settings");
+        $sth->execute();
+        return $sth->fetch();
+    }
+
+    public function getUsersCount($role="")
+    {
+        $query = "";
+        if($role != '')
+        {
+            $query = 'SELECT * FROM users WHERE role = "'.$role.'" ';
+        } else {
+            $query = 'SELECT * FROM users WHERE role != "Admin" AND role != "Sub Admin" ';
+        }
+        $sth = $this->conn->prepare($query);
+        $sth->execute();
+        return $sth->rowCount();
+    }
+
+    public function view_buyers($status = '')
+    {
+        $query = "";
+        switch($status){
+            case "active":
+                $query = 'SELECT * FROM users WHERE role = "Buyer" AND status = 1 ORDER BY sn';
+                break;
+            case "inactive":
+                $query = 'SELECT * FROM users WHERE role = "Buyer" AND status = 2 ORDER BY sn';
+                break;
+            case "pending":
+                $query = 'SELECT * FROM users WHERE role = "Buyer" AND status = 0 ORDER BY sn';
+                break;
+            default:
+                $query = 'SELECT * FROM users WHERE role = "Buyer" ORDER BY sn';
+        }
+        $sth = $this->conn->prepare($query);
+        $sth->execute();
+        return $sth->fetchAll();
+    }
+
+    public function view_admins($status = '')
+    {
+        $query = "";
+        switch($status){
+            case "active":
+                $query = 'SELECT * FROM users WHERE (role = "Admin" OR role = "Sub Admin") AND status = 1 ORDER BY sn';
+                break;
+            case "inactive":
+                $query = 'SELECT * FROM users WHERE (role = "Admin" OR role = "Sub Admin")  AND status = 2 ORDER BY sn';
+                break;
+            case "pending":
+                $query = 'SELECT * FROM users WHERE (role = "Admin" OR role = "Sub Admin")  AND status = 0 ORDER BY sn';
+                break;
+            default:
+                $query = 'SELECT * FROM users WHERE (role = "Admin" OR role = "Sub Admin")  ORDER BY sn';
+        }
+        $sth = $this->conn->prepare($query);
+        $sth->execute();
+        return $sth->fetchAll();
+    }
+
     //Get all sellers
     public function view_all_seller(){
 
-        $sql = 'SELECT * FROM users WHERE role != "Admin" ORDER BY sn';
+        $sql = 'SELECT * FROM users WHERE role = "Seller" OR role = "International" ORDER BY sn';
         foreach ($this->conn->query($sql) as $row) {
 
             if($row['status']==1){
@@ -1408,7 +1571,7 @@ class Users{
     //Get all pending seller
     public function view_pending_seller(){
 
-        $sql = 'SELECT * FROM users WHERE role != "Admin" AND status=0 ORDER BY sn';
+        $sql = 'SELECT * FROM users WHERE (role = "Seller" OR role = "International") AND status=0 ORDER BY sn';
         foreach ($this->conn->query($sql) as $row) {
 
             if($row['status']==1){
@@ -1435,7 +1598,7 @@ class Users{
     //Get all active seller
     public function view_active_seller(){
 
-        $sql = 'SELECT * FROM users WHERE role != "Admin" AND status=1 ORDER BY sn';
+        $sql = 'SELECT * FROM users WHERE (role = "Seller" OR role = "International") AND status=1 ORDER BY sn';
         foreach ($this->conn->query($sql) as $row) {
 
             if($row['status']==1){
@@ -1460,7 +1623,7 @@ class Users{
     //Get all inactive seller
     public function view_inactive_seller(){
 
-        $sql = 'SELECT * FROM users WHERE role != "Admin" AND status=2 ORDER BY sn';
+        $sql = 'SELECT * FROM users WHERE (role = "Seller" OR role = "International") AND status=2 ORDER BY sn';
         foreach ($this->conn->query($sql) as $row) {
 
            if($row['status']==1){
@@ -2770,12 +2933,12 @@ class Users{
             echo '<span class="caret"><i class="fa fa-angle-down" aria-hidden="true"></i></span>';
             echo '</a>';
             echo '<ul class="vertical-drop drop-css drop-lv1 sub-menu" style="width:220px; ">';
-            $sql2 = 'SELECT DISTINCT(marketstate), categoryid FROM marketproductid WHERE categoryid='.$menu['catid'];
+            $sql2 = 'SELECT DISTINCT(marketstate), categoryid  FROM marketproductid WHERE categoryid='.$menu['catid'];
             foreach($this->conn->query($sql2) as $submenu){
                 echo '<li class="vertical-item sub-dropdown toggle-menu">';
                 echo '<a class="menu-link" href="/collections/frontpage" title="">'.$submenu['marketstate'].'<span class="caret"><i class="fa fa-angle-down" aria-hidden="true"></i></span></a>';
                 echo '<ul class="vertical-drop drop-lv2 dropdown-content sub-menu">';
-                    $sql3 = 'SELECT DISTINCT(marketname) FROM market';
+                    $sql3 = 'SELECT DISTINCT(marketname) FROM market WHERE marketid IN ( SELECT marketid FROM marketproductid WHERE categoryid = "'. $submenu['categoryid'] .'" AND marketstate = "'. $submenu['marketstate'] .'"   )';
                     foreach($this->conn->query($sql3) as $submenu2){
                         echo '<li class="vertical-item level2 "><a href="/collections/electronics-computer" title="">'.$submenu2['marketname'].'</a></li>';
                     }
@@ -3158,9 +3321,58 @@ class Users{
         }
         printf("Error: %s.\n", $stmt->error);
         return false;
+    }
+
+    public function ad_subscriptions(){
+        return [
+            array('id' => 1, 'title' => '1 Week', 'price' => '1500', 'days' => 7),
+            array('id' => 2, 'title' => '2 Weeks', 'price' => '2000', 'days' => 14),
+            array('id' => 3, 'title' => '1 Month', 'price' => '3500', 'days' => 30),
+            array('id' => 4, 'title' => '3 Months', 'price' => '6000', 'days' => 90),
+            array('id' => 5, 'title' => '6 Months', 'price' => '12000', 'days' => 180),
+        ];
+    }
+
+    public function get_ads(){
+        $sth = $this->conn->prepare('SELECT * FROM ad');
+        $sth->execute();
+        return $sth->fetchAll();
+    }
+
+    public function get_user_ads($user){
+        $sth = $this->conn->prepare('SELECT * FROM ad WHERE userid = :userid');
+        $sth->execute(array(':userid' => $user));
+        return $sth->fetchAll();
+    }
+
+    public function create_ad($link, $img, $end_date){
+        $sth = $this->conn->prepare('INSERT INTO ad (userid, link, img, end_date) VALUES (:userid, :link, :img, :end_date)');
+        if($sth->execute(
+            array(
+                ':userid' => $_SESSION['userid'],
+                ':link' => $link,
+                ':img' => $img,
+                ':end_date' => date('Y-m-d', strtotime(date('Y-m-d'). ' +'.$end_date.' days'))
+            )
+        )){
+            return true;
+        }
+        return false;
+    }
+
+    public function subscribe_ad() {
 
 
-
+        if($this->durate == 1){
+            $this->startDate =  date('Y-m-d');
+            $this->endDate = date('Y-m-d', strtotime($this->startDate. ' +30 days')); // Y-m-d
+        }elseif($this->durate == 6){
+            $this->startDate =  date('Y-m-d');
+            $this->endDate = date('Y-m-d', strtotime($this->startDate. ' +180 days')); // Y-m-d
+        }elseif($this->durate == 12){
+            $this->startDate =  date('Y-m-d');
+            $this->endDate = date('Y-m-d', strtotime($this->startDate. ' +365 days')); // Y-m-d
+        }
     }
 
 }

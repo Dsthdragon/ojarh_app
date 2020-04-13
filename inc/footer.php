@@ -281,6 +281,10 @@
             <div class="box-price" id="verifyStatus"></div>
             <div class="product-info">
               <p class="product-inventory">
+                <label style="font-size: 16px; color: black;">Agent ID :</label><br>
+                <span style="font-size: 18px; color: red;" id="agentId"></span>
+              </p>
+              <p class="product-type">
                 <label style="font-size: 16px; color: black;">Agent Email :</label><br>
                 <span style="font-size: 18px; color: red;" id="agentEmail"></span>
               </p>
@@ -771,6 +775,7 @@
               }else{
                 var stat = '<span class="badge badge-danger">Not Verified!</span>';
               }
+              document.getElementById('agentId').innerHTML = response['agentid'];
               document.getElementById('agentName').innerHTML = response['agentlname'] + ' ' + response['agentfname'];
               document.getElementById('agentPic').innerHTML = '<img src="agentprofilepic/'+ response['agentid'] +'/'+ response['agentpic_name'] +'" title="' + response['agentlname'] + ' ' + response['agentfname'] + '">';
               document.getElementById('verifyStatus').innerHTML = stat;

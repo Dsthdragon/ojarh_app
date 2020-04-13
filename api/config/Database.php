@@ -5,11 +5,11 @@
     define('DB_USERNAME', 'root');
     define('DB_PASSWORD', '');
     define('DB_DATABASE', 'ojarh');
-    define("BASE_URL", "http://127.0.0.1/ojarhnew/");
-    define("SELLER_URL", "http://localhost/ojarhnew/seller/");
-    define("BUYER_URL", "http://localhost/ojarhnew/buyer/");
-    define("ADMIN_URL", "http://localhost/ojarhnew/admin/");
-    define("ADMIN_URL", "http://localhost/ojarhnew/international/");
+    define("BASE_URL", "http://localhost:8080/ojarh_app/");
+    define("SELLER_URL", "http://localhost:8080/ojarh_app/seller/");
+    define("BUYER_URL", "http://localhost:8080/ojarh_app/buyer/");
+    define("ADMIN_URL", "http://localhost:8080/ojarh_app/admin/");
+    define("INTERNATIONAL_URL", "http://localhost:8080/ojarh_app/international/");
 
 
 

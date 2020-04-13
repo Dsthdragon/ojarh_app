@@ -25,7 +25,7 @@ $user->userid = isset($_POST['userid']) ? $_POST['userid'] : die();
 $user->admin = $_SESSION['userid'];
 $user->role = $_SESSION['role'];
 $user->status = 1;
-if($user->admin == 1111 AND $user->role == 'Admin'){
+if($user->role == 'Admin'){
 	if ($user->activateSeller()) {
 		echo 'success';
 		return true;

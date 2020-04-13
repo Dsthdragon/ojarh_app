@@ -1,12 +1,7 @@
 <?php
 include('../api/config/Database.php');
 include('../api/models/session.php');
-if(!isset($_SESSION['role']) || empty($_SESSION['role'])  || $_SESSION['role']!='Seller')
-    {
-        session_destroy();
-        session_unset();
-        header("Location: " . BASE_URL);
-    }
+include('can_access.php');
 ?>
 <?php include 'inc/header.php'; ?>
                     <div class="app-inner-layout app-inner-layout-page">

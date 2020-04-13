@@ -280,6 +280,51 @@
     handler.openIframe();
   }
 
+
+  function payWithPaystack2( useremail, fname, lname, fone,){
+
+    var amount = $('#days').find(':selected').data('amount')
+    console.log(amount);
+
+    // alert(readyPlan + ' ' + planner);
+    // return;
+    console.log(amount);
+    var handler = PaystackPop.setup({
+      key: 'pk_test_7974282ff9c7f73d5afc1a79fd11746cba653e28',
+      first_name: fname,
+      last_name: lname,
+      email: useremail,
+      amount: amount * 100,
+      currency: "NGN",
+      ref: ''+Math.floor((Math.random() * 1000000000) + 1), // generates a pseudo-unique reference. Please replace with a reference you generated. Or remove the line entirely so our API will generate one for you
+      metadata: {
+         custom_fields: [
+            {
+                display_name: "Mobile Number",
+                variable_name: "mobile_number",
+                value: fone
+            }
+         ]
+      },
+      callback: function(response){
+           alert('success. transaction ref is ' + response.message);
+           alert(response.status);
+           console.log(response);
+           // return;
+          if(response.status == 'success'){
+
+             $('#addAdsBtn').click();
+          }else{
+            alert('Error:' + response.message)
+          }
+      },
+      onClose: function(){
+          alert('window closed');
+      }
+    });
+    handler.openIframe();
+  }
+
   function submitUpgrade(userid, useremail){
     document.getElementById('upgradeBtn').innerHTML = "Please wait...";
     document.getElementById('upgradeBtn').disabled = true;
